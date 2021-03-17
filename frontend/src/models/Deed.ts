@@ -23,18 +23,26 @@ export default class Deed {
         return provider.getBlockNumber();
     }
 
-    create(deedId: number, deedUri: string){
-        return new Promise((resolve, reject) => {
-            this.contractSignedInstance.registerDeed(deedId, deedUri, { from: this.account, gas: this.gas }
-                , (err: any, transaction: any) => {
-                    if (!err) {
-                        resolve(transaction);
-                    }
-                    else {
-                        reject(err);
-                    }
-                })
-        })
+    async create(deedId: number, deedUri: string){
+
+        var signedContract = this.contractInstance.connect(provider.getSigner(this.account));
+        //await contract.connect(provider.getSigner(accounts[x]).methodName(arg, { value: 1000 });
+
+        console.log(this.account);
+
+        return await signedContract.registerDeed(deedId, deedUri);
+
+        // return new Promise((resolve, reject) => {
+        //     signedContract.registerDeed(deedId, deedUri
+        //         , (err: any, transaction: any) => {
+        //             if (!err) {
+        //                 resolve(transaction);
+        //             }
+        //             else {
+        //                 reject(err);
+        //             }
+        //         })
+        // })
     }
 
     exists(deeId: number){

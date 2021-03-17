@@ -10,6 +10,10 @@ const Config = {
     AUCTIONCONTRACT_ABI: AuctionContract.abi,
 
     GAS_AMOUNT: 500000,
+
+    IPFS_URL: 'ipfs.infura.io',
+    IPFS_PORT: 5001,
+    IPFS_PROTOCOL: 'https'
 }
 
 export default Config;

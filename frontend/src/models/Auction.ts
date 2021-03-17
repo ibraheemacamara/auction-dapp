@@ -23,18 +23,31 @@ export default class Auction {
         return provider.getBlockNumber();
     }
 
+    async getCount(): Promise<number> {
+        return await this.contractInstance.getAuctionsCount()
+    }
+
+    async getAuctionById(auctionId: number) {
+        return await this.contractInstance.getAuctionById(auctionId);
+    }
+
     //Create new auction
-    createAuction(title: string, deedId: number, stratPrice: number, metaData: string, blockDeadline: number) {
-        return new Promise((resolve, reject) => {
-            this.contractSignedInstance.createAuction(
-                title, deedId, Config.DEEDCONTRACT_ADDRESS, stratPrice, metaData, blockDeadline,
-                { from: this.account, gas: this.gas }
-                , (transaction: any, err: any) => {
-                    if (!err) resolve(transaction);
-                    else reject(err);
-                }
-            )
-        })
+    async createAuction(title: string, deedId: number, stratPrice: number, metaData: string, blockDeadline: number) {
+        
+        var signedContract = this.contractInstance.connect(provider.getSigner(this.account));
+        var price = ethers.utils.parseEther(stratPrice.toString());
+        console.log("Start Price: ", price);
+        return await signedContract.createAuction(title, deedId, Config.DEEDCONTRACT_ADDRESS, price, metaData, blockDeadline);
+        
+        // return new Promise((resolve, reject) => {
+        //     signedContract.createAuction(
+        //         title, deedId, Config.DEEDCONTRACT_ADDRESS, stratPrice, metaData, blockDeadline
+        //         , (transaction: any, err: any) => {
+        //             if (!err) resolve(transaction);
+        //             else reject(err);
+        //         }
+        //     )
+        // })
     }
 
     //Bid on auction
@@ -72,16 +85,6 @@ export default class Auction {
     findAuctionById(auctionId: number): Promise<number> {
         return new Promise((resolve, reject) => {
             this.contractInstance.getAuctionById(auctionId, { from: this.account, gas: this.gas }
-                , (transaction: any, err: any) => {
-                    if (!err) resolve(transaction);
-                    else reject(err);
-                })
-        })
-    }
-
-    getCount(): Promise<number> {
-        return new Promise((resolve, reject) => {
-            this.contractInstance.getAuctionsCount({ from: this.account, gas: this.gas }
                 , (transaction: any, err: any) => {
                     if (!err) resolve(transaction);
                     else reject(err);

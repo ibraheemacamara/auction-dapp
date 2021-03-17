@@ -2,6 +2,7 @@
 pragma solidity ^0.7.0;
 
 import "./DeedContract.sol";
+import "hardhat/console.sol";
 
 contract AuctionContract {
     //available auctions
@@ -26,7 +27,7 @@ contract AuctionContract {
         uint256 deedId;
         address deedContractAddress;
         uint256 blockDeadline;
-        uint256 stratPrice;
+        uint256 startPrice;
         string metaData;
         bool active;
         bool finalized;
@@ -47,7 +48,9 @@ contract AuctionContract {
     //check if send own the deed
     modifier isDeedOwner(address _deedContractAddress, uint256 _deedId) {
         address deedOwner = DeedContract(_deedContractAddress).ownerOf(_deedId);
-        require(deedOwner == address(this));
+        console.log("Deed Owner address is %s ", deedOwner);
+        console.log("This address is %s ", msg.sender);
+        require(deedOwner == msg.sender);
         _;
     }
 
@@ -92,7 +95,7 @@ contract AuctionContract {
             uint256 deedId,
             address deedContractAddress,
             uint256 blockDeadline,
-            uint256 stratPrice,
+            uint256 startPrice,
             string memory metaData,
             bool active,
             bool finalized
@@ -106,7 +109,7 @@ contract AuctionContract {
             auction.deedId,
             auction.deedContractAddress,
             auction.blockDeadline,
-            auction.stratPrice,
+            auction.startPrice,
             auction.metaData,
             auction.active,
             auction.finalized
@@ -118,18 +121,20 @@ contract AuctionContract {
         string memory _auctionTitle,
         uint256 _deedId,
         address _deedContractAddress,
-        uint256 _stratPrice,
+        uint256 _startPrice,
         string memory _metaData,
         uint256 _blockDeadline
     ) public isDeedOwner(_deedContractAddress, _deedId) returns (bool) {
         uint256 auctionId = auctions.length;
+
+        console.log("Creating Auction: title: %s, deedId: %s, startPrice: %s", _auctionTitle, _deedId, _startPrice);
 
         Auction memory newAuction;
         newAuction.name = _auctionTitle;
         newAuction.owner = msg.sender;
         newAuction.deedId = _deedId;
         newAuction.deedContractAddress = _deedContractAddress;
-        newAuction.stratPrice = _stratPrice;
+        newAuction.startPrice = _startPrice;
         newAuction.metaData = _metaData;
         newAuction.blockDeadline = _blockDeadline;
         newAuction.active = true;
@@ -231,7 +236,7 @@ contract AuctionContract {
 
         uint bidsLength = auctionBids[_auctionId].length;
         uint256 newBidAmount = msg.value;
-        uint256 tamponAmount = currentAuction.stratPrice;
+        uint256 tamponAmount = currentAuction.startPrice;
         Bid memory lastBid;
 
         if (bidsLength > 0) {

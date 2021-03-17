@@ -2,6 +2,26 @@
   text-align: center;
 }
 
+.header {
+  text-align: center;
+}
+
+.img {
+  margin: 20pt;
+}
+
+.blockButton {
+  margin: 20pt;
+}
+
+.form {
+  margin-top: 40pt;
+}
+
+.submit {
+  margin-top: 20pt;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -27,6 +47,11 @@
 .App-link {
   color: #61dafb;
 }
+
+.bids {
+  margin: 20pt;
+}
+
 
 @keyframes App-logo-spin {
   from {
